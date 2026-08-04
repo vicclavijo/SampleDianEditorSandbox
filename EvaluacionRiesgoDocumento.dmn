@@ -658,7 +658,7 @@
         </kie:ComponentsWidthsExtension>
       </di:extension>
       <dmndi:DMNShape id="shape_input_valor129" dmnElementRef="input_valor129">
-        <dc:Bounds x="20" y="100" width="130" height="50" />
+        <dc:Bounds x="20" y="140" width="130" height="50" />
       </dmndi:DMNShape>
       <dmndi:DMNShape id="shape_input_valor280" dmnElementRef="input_valor280">
         <dc:Bounds x="20" y="380" width="130" height="50" />
@@ -683,7 +683,7 @@
         </dmndi:DMNDecisionServiceDividerLine>
       </dmndi:DMNShape>
       <dmndi:DMNEdge id="edge_valor129_ctd" dmnElementRef="ir_ctd_valor129">
-        <di:waypoint x="150" y="125" />
+        <di:waypoint x="150" y="165" />
         <di:waypoint x="340" y="300" />
       </dmndi:DMNEdge>
       <dmndi:DMNEdge id="edge_valor280_cre" dmnElementRef="ir_cre_valor280">
