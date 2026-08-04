@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dmn:definitions xmlns:dmn="https://www.omg.org/spec/DMN/20240513/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:feel="https://www.omg.org/spec/DMN/20240513/FEEL/" xmlns:kie="https://kie.org/dmn/extensions/1.0" id="evaluacion_riesgo_documento" name="EvaluacionRiesgoDocumento" namespace="http://www.example.com/EvaluacionRiesgoDocumento">
+  <dmn:description>
+    Modelo DMN de evaluacion de riesgo de documento para la PoC DIAN — Motor de Reglas.
+    Filosofia &quot;DMN decide, DRL ejecuta&quot;: este modelo determina el nivel de riesgo asociado
+    a un documento segun el tipo (valor129) y el valor economico reportado (valor280).
+    No ejecuta validaciones tecnicas ni invoca reglas DRL.
+    Los umbrales y criterios son demostrativos para la PoC y no representan
+    una politica real de riesgo institucional.
+  </dmn:description>
+  <dmn:itemDefinition id="tCategoriaDocumento" name="tCategoriaDocumento">
+    <dmn:typeRef>string</dmn:typeRef>
+    <dmn:allowedValues id="_8579A922-AEA4-4604-9067-FA371C064774">
+      <dmn:text>&quot;MENOR_EDAD&quot;,&quot;PERSONA_NATURAL&quot;,&quot;PERSONA_EXTRANJERA&quot;,&quot;PERSONA_JURIDICA&quot;,&quot;PERSONA_JURIDICA_EXTRANJERA&quot;,&quot;DESCONOCIDO&quot;</dmn:text>
+    </dmn:allowedValues>
+  </dmn:itemDefinition>
+  <dmn:itemDefinition id="tRangoEconomico" name="tRangoEconomico">
+    <dmn:typeRef>string</dmn:typeRef>
+    <dmn:allowedValues id="_A9F95FAC-7644-4309-9C43-8C923B6B2285">
+      <dmn:text>&quot;BAJO&quot;,&quot;MEDIO&quot;,&quot;ALTO&quot;</dmn:text>
+    </dmn:allowedValues>
+  </dmn:itemDefinition>
+  <dmn:itemDefinition id="tNivelRiesgo" name="tNivelRiesgo">
+    <dmn:typeRef>string</dmn:typeRef>
+    <dmn:allowedValues id="_C335926B-2455-476A-9223-C1AB490026CB">
+      <dmn:text>&quot;BAJO&quot;,&quot;MEDIO&quot;,&quot;ALTO&quot;</dmn:text>
+    </dmn:allowedValues>
+  </dmn:itemDefinition>
+  <dmn:itemDefinition id="tClasificacionDocumento" name="tClasificacionDocumento">
+    <dmn:itemComponent id="tClasificacionDocumento_tipo" name="tipoDocumento">
+      <dmn:typeRef>string</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tClasificacionDocumento_categoria" name="categoriaDocumento">
+      <dmn:typeRef>tCategoriaDocumento</dmn:typeRef>
+    </dmn:itemComponent>
+  </dmn:itemDefinition>
+  <dmn:itemDefinition id="tDecisionRiesgo" name="tDecisionRiesgo">
+    <dmn:itemComponent id="tDecisionRiesgo_nivel" name="nivelRiesgo">
+      <dmn:typeRef>tNivelRiesgo</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tDecisionRiesgo_inspeccion" name="requiereInspeccion">
+      <dmn:typeRef>boolean</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tDecisionRiesgo_mensaje" name="mensaje">
+      <dmn:typeRef>string</dmn:typeRef>
+    </dmn:itemComponent>
+  </dmn:itemDefinition>
+  <dmn:itemDefinition id="tResultadoRiesgo" name="tResultadoRiesgo">
+    <dmn:itemComponent id="tResultadoRiesgo_tipo" name="tipoDocumento">
+      <dmn:typeRef>string</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tResultadoRiesgo_categoria" name="categoriaDocumento">
+      <dmn:typeRef>tCategoriaDocumento</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tResultadoRiesgo_rango" name="rangoEconomico">
+      <dmn:typeRef>tRangoEconomico</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tResultadoRiesgo_nivel" name="nivelRiesgo">
+      <dmn:typeRef>tNivelRiesgo</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tResultadoRiesgo_inspeccion" name="requiereInspeccion">
+      <dmn:typeRef>boolean</dmn:typeRef>
+    </dmn:itemComponent>
+    <dmn:itemComponent id="tResultadoRiesgo_mensaje" name="mensaje">
+      <dmn:typeRef>string</dmn:typeRef>
+    </dmn:itemComponent>
+  </dmn:itemDefinition>
+  <dmn:decision id="decision_clasificar_tipo_documento" name="ClasificarTipoDocumento">
+    <dmn:variable id="var_clasificar_tipo_documento" name="ClasificarTipoDocumento" typeRef="tClasificacionDocumento" />
+    <dmn:informationRequirement id="ir_ctd_valor129">
+      <dmn:requiredInput href="#input_valor129" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="dt_clasificar_tipo_documento" hitPolicy="FIRST">
+      <dmn:input id="in_ctd_valor129" label="Codigo tipo documento (valor129)">
+        <dmn:inputExpression id="expr_ctd_valor129" typeRef="number">
+          <dmn:text>valor129</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="out_ctd_tipo" name="tipoDocumento" label="Tipo de documento" typeRef="string" />
+      <dmn:output id="out_ctd_categoria" name="categoriaDocumento" label="Categoria funcional" typeRef="tCategoriaDocumento" />
+      <dmn:rule id="r_ctd_11">
+        <dmn:inputEntry id="ie_ctd_11">
+          <dmn:text>11</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_11_tipo">
+          <dmn:text>&quot;Registro civil&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_11_cat">
+          <dmn:text>&quot;MENOR_EDAD&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_12">
+        <dmn:inputEntry id="ie_ctd_12">
+          <dmn:text>12</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_12_tipo">
+          <dmn:text>&quot;Tarjeta de identidad&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_12_cat">
+          <dmn:text>&quot;MENOR_EDAD&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_13">
+        <dmn:inputEntry id="ie_ctd_13">
+          <dmn:text>13</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_13_tipo">
+          <dmn:text>&quot;Cedula de ciudadania&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_13_cat">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_21">
+        <dmn:inputEntry id="ie_ctd_21">
+          <dmn:text>21</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_21_tipo">
+          <dmn:text>&quot;Tarjeta de extranjeria&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_21_cat">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_22">
+        <dmn:inputEntry id="ie_ctd_22">
+          <dmn:text>22</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_22_tipo">
+          <dmn:text>&quot;Cedula de extranjeria&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_22_cat">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_31">
+        <dmn:inputEntry id="ie_ctd_31">
+          <dmn:text>31</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_31_tipo">
+          <dmn:text>&quot;NIT&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_31_cat">
+          <dmn:text>&quot;PERSONA_JURIDICA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_41">
+        <dmn:inputEntry id="ie_ctd_41">
+          <dmn:text>41</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_41_tipo">
+          <dmn:text>&quot;Pasaporte&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_41_cat">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_42">
+        <dmn:inputEntry id="ie_ctd_42">
+          <dmn:text>42</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_42_tipo">
+          <dmn:text>&quot;Documento extranjero&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_42_cat">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_47">
+        <dmn:inputEntry id="ie_ctd_47">
+          <dmn:text>47</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_47_tipo">
+          <dmn:text>&quot;PEP&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_47_cat">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_50">
+        <dmn:inputEntry id="ie_ctd_50">
+          <dmn:text>50</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_50_tipo">
+          <dmn:text>&quot;NIT extranjero&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_50_cat">
+          <dmn:text>&quot;PERSONA_JURIDICA_EXTRANJERA&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_91">
+        <dmn:inputEntry id="ie_ctd_91">
+          <dmn:text>91</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_91_tipo">
+          <dmn:text>&quot;NUIP&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_91_cat">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_ctd_default">
+        <dmn:inputEntry id="ie_ctd_default">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_ctd_default_tipo">
+          <dmn:text>&quot;No reconocido&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_ctd_default_cat">
+          <dmn:text>&quot;DESCONOCIDO&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="decision_clasificar_rango_economico" name="ClasificarRangoEconomico">
+    <dmn:variable id="var_clasificar_rango_economico" name="ClasificarRangoEconomico" typeRef="tRangoEconomico" />
+    <dmn:informationRequirement id="ir_cre_valor280">
+      <dmn:requiredInput href="#input_valor280" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="dt_clasificar_rango_economico" hitPolicy="UNIQUE">
+      <dmn:input id="in_cre_valor280" label="Valor economico (valor280)">
+        <dmn:inputExpression id="expr_cre_valor280" typeRef="number">
+          <dmn:text>valor280</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="out_cre_rango" label="Rango economico" typeRef="tRangoEconomico" />
+      <dmn:rule id="r_cre_bajo">
+        <dmn:inputEntry id="ie_cre_bajo">
+          <dmn:text>&lt; 50000000</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_cre_bajo">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_cre_medio">
+        <dmn:inputEntry id="ie_cre_medio">
+          <dmn:text>[50000000..300000000)</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_cre_medio">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_cre_alto">
+        <dmn:inputEntry id="ie_cre_alto">
+          <dmn:text>&gt;= 300000000</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_cre_alto">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="decision_determinar_nivel_riesgo" name="DeterminarNivelRiesgo">
+    <dmn:variable id="var_determinar_nivel_riesgo" name="DeterminarNivelRiesgo" typeRef="tDecisionRiesgo" />
+    <dmn:informationRequirement id="ir_dnr_ctd">
+      <dmn:requiredDecision href="#decision_clasificar_tipo_documento" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="ir_dnr_cre">
+      <dmn:requiredDecision href="#decision_clasificar_rango_economico" />
+    </dmn:informationRequirement>
+    <dmn:decisionTable id="dt_determinar_nivel_riesgo" hitPolicy="FIRST" label="DeterminarNivelRiesgo" typeRef="tDecisionRiesgo">
+      <dmn:input id="in_dnr_categoria" label="Categoria documento">
+        <dmn:inputExpression id="expr_dnr_categoria" typeRef="tCategoriaDocumento">
+          <dmn:text>ClasificarTipoDocumento.categoriaDocumento</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:input id="in_dnr_rango" label="Rango economico">
+        <dmn:inputExpression id="expr_dnr_rango" typeRef="tRangoEconomico">
+          <dmn:text>ClasificarRangoEconomico</dmn:text>
+        </dmn:inputExpression>
+      </dmn:input>
+      <dmn:output id="out_dnr_nivel" name="nivelRiesgo" label="Nivel de riesgo" typeRef="tNivelRiesgo" />
+      <dmn:output id="out_dnr_inspeccion" name="requiereInspeccion" label="Requiere inspeccion" typeRef="boolean" />
+      <dmn:output id="out_dnr_mensaje" name="mensaje" label="Mensaje" typeRef="string" />
+      <dmn:rule id="r_dnr_desconocido">
+        <dmn:inputEntry id="ie_dnr_desc_cat">
+          <dmn:text>&quot;DESCONOCIDO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_desc_rng">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_desc_nivel">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_desc_insp">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_desc_msg">
+          <dmn:text>&quot;El tipo de documento no es reconocido y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_rango_nulo">
+        <dmn:inputEntry id="ie_dnr_null_cat">
+          <dmn:text>-</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_null_rng">
+          <dmn:text>null</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_null_nivel">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_null_insp">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_null_msg">
+          <dmn:text>&quot;El valor economico no fue informado y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_me_bajo">
+        <dmn:inputEntry id="ie_dnr_me_bajo_c">
+          <dmn:text>&quot;MENOR_EDAD&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_me_bajo_r">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_me_bajo_n">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_bajo_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_bajo_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo bajo y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_me_medio">
+        <dmn:inputEntry id="ie_dnr_me_med_c">
+          <dmn:text>&quot;MENOR_EDAD&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_me_med_r">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_me_med_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_med_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_med_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_me_alto">
+        <dmn:inputEntry id="ie_dnr_me_alt_c">
+          <dmn:text>&quot;MENOR_EDAD&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_me_alt_r">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_me_alt_n">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_alt_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_me_alt_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo alto y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pn_bajo">
+        <dmn:inputEntry id="ie_dnr_pn_bajo_c">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pn_bajo_r">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_bajo_n">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_bajo_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_bajo_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo bajo y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pn_medio">
+        <dmn:inputEntry id="ie_dnr_pn_med_c">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pn_med_r">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_med_n">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_med_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_med_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo bajo y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pn_alto">
+        <dmn:inputEntry id="ie_dnr_pn_alt_c">
+          <dmn:text>&quot;PERSONA_NATURAL&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pn_alt_r">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_alt_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_alt_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pn_alt_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pe_bajo">
+        <dmn:inputEntry id="ie_dnr_pe_bajo_c">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pe_bajo_r">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_bajo_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_bajo_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_bajo_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pe_medio">
+        <dmn:inputEntry id="ie_dnr_pe_med_c">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pe_med_r">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_med_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_med_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_med_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pe_alto">
+        <dmn:inputEntry id="ie_dnr_pe_alt_c">
+          <dmn:text>&quot;PERSONA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pe_alt_r">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_alt_n">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_alt_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pe_alt_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo alto y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pj_bajo">
+        <dmn:inputEntry id="ie_dnr_pj_bajo_c">
+          <dmn:text>&quot;PERSONA_JURIDICA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pj_bajo_r">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_bajo_n">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_bajo_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_bajo_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo bajo y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pj_medio">
+        <dmn:inputEntry id="ie_dnr_pj_med_c">
+          <dmn:text>&quot;PERSONA_JURIDICA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pj_med_r">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_med_n">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_med_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_med_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo bajo y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pj_alto">
+        <dmn:inputEntry id="ie_dnr_pj_alt_c">
+          <dmn:text>&quot;PERSONA_JURIDICA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pj_alt_r">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_alt_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_alt_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pj_alt_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pje_bajo">
+        <dmn:inputEntry id="ie_dnr_pje_bajo_c">
+          <dmn:text>&quot;PERSONA_JURIDICA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pje_bajo_r">
+          <dmn:text>&quot;BAJO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_bajo_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_bajo_i">
+          <dmn:text>false</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_bajo_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y no requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pje_medio">
+        <dmn:inputEntry id="ie_dnr_pje_med_c">
+          <dmn:text>&quot;PERSONA_JURIDICA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pje_med_r">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_med_n">
+          <dmn:text>&quot;MEDIO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_med_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_med_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo medio y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+      <dmn:rule id="r_dnr_pje_alto">
+        <dmn:inputEntry id="ie_dnr_pje_alt_c">
+          <dmn:text>&quot;PERSONA_JURIDICA_EXTRANJERA&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:inputEntry id="ie_dnr_pje_alt_r">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:inputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_alt_n">
+          <dmn:text>&quot;ALTO&quot;</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_alt_i">
+          <dmn:text>true</dmn:text>
+        </dmn:outputEntry>
+        <dmn:outputEntry id="oe_dnr_pje_alt_m">
+          <dmn:text>&quot;El documento presenta un nivel de riesgo alto y requiere inspeccion.&quot;</dmn:text>
+        </dmn:outputEntry>
+      </dmn:rule>
+    </dmn:decisionTable>
+  </dmn:decision>
+  <dmn:decision id="decision_construir_resultado_riesgo" name="ConstruirResultadoRiesgo">
+    <dmn:variable id="var_construir_resultado_riesgo" name="ConstruirResultadoRiesgo" typeRef="tResultadoRiesgo" />
+    <dmn:informationRequirement id="ir_crr_ctd">
+      <dmn:requiredDecision href="#decision_clasificar_tipo_documento" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="ir_crr_cre">
+      <dmn:requiredDecision href="#decision_clasificar_rango_economico" />
+    </dmn:informationRequirement>
+    <dmn:informationRequirement id="ir_crr_dnr">
+      <dmn:requiredDecision href="#decision_determinar_nivel_riesgo" />
+    </dmn:informationRequirement>
+    <dmn:context id="ctx_resultado_riesgo">
+      <dmn:contextEntry id="ce_tipo">
+        <dmn:variable id="var_ce_tipo" name="tipoDocumento" typeRef="string" />
+        <dmn:literalExpression id="le_tipo">
+          <dmn:text>ClasificarTipoDocumento.tipoDocumento</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry id="ce_categoria">
+        <dmn:variable id="var_ce_categoria" name="categoriaDocumento" typeRef="tCategoriaDocumento" />
+        <dmn:literalExpression id="le_categoria">
+          <dmn:text>ClasificarTipoDocumento.categoriaDocumento</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry id="ce_rango">
+        <dmn:variable id="var_ce_rango" name="rangoEconomico" typeRef="tRangoEconomico" />
+        <dmn:literalExpression id="le_rango">
+          <dmn:text>ClasificarRangoEconomico</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry id="ce_nivel">
+        <dmn:variable id="var_ce_nivel" name="nivelRiesgo" typeRef="tNivelRiesgo" />
+        <dmn:literalExpression id="le_nivel">
+          <dmn:text>DeterminarNivelRiesgo.nivelRiesgo</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry id="ce_inspeccion">
+        <dmn:variable id="var_ce_inspeccion" name="requiereInspeccion" typeRef="boolean" />
+        <dmn:literalExpression id="le_inspeccion">
+          <dmn:text>DeterminarNivelRiesgo.requiereInspeccion</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+      <dmn:contextEntry id="ce_mensaje">
+        <dmn:variable id="var_ce_mensaje" name="mensaje" typeRef="string" />
+        <dmn:literalExpression id="le_mensaje">
+          <dmn:text>DeterminarNivelRiesgo.mensaje</dmn:text>
+        </dmn:literalExpression>
+      </dmn:contextEntry>
+    </dmn:context>
+  </dmn:decision>
+  <dmn:inputData id="input_valor129" name="valor129">
+    <dmn:variable id="var_valor129" name="valor129" typeRef="number" />
+  </dmn:inputData>
+  <dmn:inputData id="input_valor280" name="valor280">
+    <dmn:variable id="var_valor280" name="valor280" typeRef="number" />
+  </dmn:inputData>
+  <dmn:decisionService id="ds_evaluacion_riesgo_documento" name="EvaluacionRiesgoDocumentoService">
+    <dmn:variable id="var_service" name="EvaluacionRiesgoDocumentoService" />
+    <dmn:outputDecision href="#decision_construir_resultado_riesgo" />
+    <dmn:encapsulatedDecision href="#decision_clasificar_tipo_documento" />
+    <dmn:encapsulatedDecision href="#decision_clasificar_rango_economico" />
+    <dmn:encapsulatedDecision href="#decision_determinar_nivel_riesgo" />
+    <dmn:inputData href="#input_valor129" />
+    <dmn:inputData href="#input_valor280" />
+  </dmn:decisionService>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram id="diagram_EvaluacionRiesgoDocumento" name="EvaluacionRiesgoDocumento" useAlternativeInputDataShape="false">
+      <di:extension>
+        <kie:ComponentsWidthsExtension>
+          <kie:ComponentWidths dmnElementRef="dt_clasificar_tipo_documento">
+            <kie:width>50</kie:width>
+            <kie:width>180</kie:width>
+            <kie:width>200</kie:width>
+            <kie:width>200</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="dt_clasificar_rango_economico">
+            <kie:width>50</kie:width>
+            <kie:width>220</kie:width>
+            <kie:width>180</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="dt_determinar_nivel_riesgo">
+            <kie:width>50</kie:width>
+            <kie:width>200</kie:width>
+            <kie:width>140</kie:width>
+            <kie:width>120</kie:width>
+            <kie:width>120</kie:width>
+            <kie:width>350</kie:width>
+          </kie:ComponentWidths>
+          <kie:ComponentWidths dmnElementRef="ctx_resultado_riesgo">
+            <kie:width>160</kie:width>
+            <kie:width>370</kie:width>
+          </kie:ComponentWidths>
+        </kie:ComponentsWidthsExtension>
+      </di:extension>
+      <dmndi:DMNShape id="shape_input_valor129" dmnElementRef="input_valor129">
+        <dc:Bounds x="20" y="100" width="130" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_input_valor280" dmnElementRef="input_valor280">
+        <dc:Bounds x="20" y="380" width="130" height="50" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_clasificar_tipo_documento" dmnElementRef="decision_clasificar_tipo_documento">
+        <dc:Bounds x="240" y="300" width="200" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_clasificar_rango_economico" dmnElementRef="decision_clasificar_rango_economico">
+        <dc:Bounds x="470" y="300" width="200" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_determinar_nivel_riesgo" dmnElementRef="decision_determinar_nivel_riesgo">
+        <dc:Bounds x="700" y="300" width="200" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_construir_resultado_riesgo" dmnElementRef="decision_construir_resultado_riesgo">
+        <dc:Bounds x="500" y="110" width="220" height="80" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="shape_service_evaluacion_riesgo" dmnElementRef="ds_evaluacion_riesgo_documento" isCollapsed="false">
+        <dc:Bounds x="210" y="70" width="740" height="370" />
+        <dmndi:DMNDecisionServiceDividerLine id="divider_evaluacion_riesgo">
+          <di:waypoint x="210" y="270" />
+          <di:waypoint x="950" y="270" />
+        </dmndi:DMNDecisionServiceDividerLine>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="edge_valor129_ctd" dmnElementRef="ir_ctd_valor129">
+        <di:waypoint x="150" y="125" />
+        <di:waypoint x="340" y="300" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_valor280_cre" dmnElementRef="ir_cre_valor280">
+        <di:waypoint x="150" y="405" />
+        <di:waypoint x="470" y="340" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_ctd_dnr" dmnElementRef="ir_dnr_ctd">
+        <di:waypoint x="440" y="340" />
+        <di:waypoint x="700" y="340" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_cre_dnr" dmnElementRef="ir_dnr_cre">
+        <di:waypoint x="670" y="340" />
+        <di:waypoint x="700" y="340" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_ctd_crr" dmnElementRef="ir_crr_ctd">
+        <di:waypoint x="340" y="300" />
+        <di:waypoint x="560" y="190" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_cre_crr" dmnElementRef="ir_crr_cre">
+        <di:waypoint x="570" y="300" />
+        <di:waypoint x="610" y="190" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="edge_dnr_crr" dmnElementRef="ir_crr_dnr">
+        <di:waypoint x="800" y="300" />
+        <di:waypoint x="680" y="190" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</dmn:definitions>
